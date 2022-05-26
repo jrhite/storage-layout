@@ -66,7 +66,13 @@ async function main() {
   console.log(`arrayOfNumsAtIndex1_viaEthersJs = ${arrayOfNumsAtIndex1_viaEthersJs}`);
 
   // TODO: calculate storage slot of arrayOfNums[1] and change the value below from 0
-  const storageSlot_arrayOfNumsAtIndex1 = 0;
+
+  const arrayOfNumsBaseStorageSlot = utils.keccak256(utils.hexZeroPad('0x1', 32));
+  const arrayOfNumsBaseStorageSlotWithOffset = BigNumber.from(arrayOfNumsBaseStorageSlot)
+    .add(1)
+    .toHexString();
+
+  const storageSlot_arrayOfNumsAtIndex1 = arrayOfNumsBaseStorageSlotWithOffset;
 
   const arrayOfNumsAtIndex1_viaGetStorageAt = await provider.getStorageAt(
     storageLayoutExamples.address,
@@ -79,7 +85,14 @@ async function main() {
   console.log(`mapOfNumsAtKey103_viaEthersJs = ${mapOfNumsAtKey103_viaEthersJs}`);
 
   // TODO: calculate storage slot of mapOfNums[103] and change the value below from 0
-  const storageSlot_mapOfNumsAtKey103 = 0;
+
+  // slice(2) cuts of the '0x'
+  const mapOfNumsBaseStorageSlot = utils.hexZeroPad('0x2', 32).slice(2);
+  const mappingKeyInHex = BigNumber.from('103').toHexString().slice(2);
+  const mappingKeyInHexWithPadding = utils.hexZeroPad('0x' + mappingKeyInHex, 32);
+
+  const storageSlot_mapOfNumsAtKey103 =
+    utils.keccak256(mappingKeyInHexWithPadding + mapOfNumsBaseStorageSlot);
 
   const mapOfNumsAtKey103_viaGetStorageAt = await provider.getStorageAt(
     storageLayoutExamples.address,
